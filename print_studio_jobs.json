@@ -1,0 +1,85 @@
+{
+  "updatedAt": "2026-10-19T13:25:00+09:00",
+  "jobs": [
+    {
+      "id": "job-sample-card",
+      "jobTitle": "준우디자인_홍길동대표_기본명함(90x50)",
+      "updatedAt": "2026-10-19T13:25:00+09:00",
+      "category": "card",
+      "shape": "rect",
+      "trimWidthMm": 90,
+      "trimHeightMm": 50,
+      "bleedMm": 1,
+      "dpi": 300,
+      "tacLimit": 280,
+      "foldType": "none",
+      "cornerRadiusMm": 0,
+      "textItems": [
+        {
+          "id": "t1",
+          "text": "준우디자인 스튜디오",
+          "xMm": 24,
+          "yMm": 8.5,
+          "widthMm": 56,
+          "heightMm": 6.5,
+          "fontSizePt": 13.5,
+          "fontFamily": "Pretendard",
+          "align": "left",
+          "c": 88,
+          "m": 75,
+          "y": 35,
+          "k": 25,
+          "isK100": false
+        },
+        {
+          "id": "t2",
+          "text": "홍길동 | 대표 디자이너",
+          "xMm": 24,
+          "yMm": 16,
+          "widthMm": 52,
+          "heightMm": 5,
+          "fontSizePt": 9.5,
+          "fontFamily": "Pretendard",
+          "align": "left",
+          "c": 0,
+          "m": 0,
+          "y": 0,
+          "k": 100,
+          "isK100": true
+        },
+        {
+          "id": "t3",
+          "text": "M. 010-1234-5678  T. 053-123-4567",
+          "xMm": 8,
+          "yMm": 29.5,
+          "widthMm": 74,
+          "heightMm": 4.5,
+          "fontSizePt": 8.5,
+          "fontFamily": "Pretendard",
+          "align": "left",
+          "c": 0,
+          "m": 0,
+          "y": 0,
+          "k": 100,
+          "isK100": true
+        },
+        {
+          "id": "t4",
+          "text": "대구광역시 중구 인쇄로 123 (교동)",
+          "xMm": 8,
+          "yMm": 35.2,
+          "widthMm": 74,
+          "heightMm": 4.5,
+          "fontSizePt": 8.0,
+          "fontFamily": "Pretendard",
+          "align": "left",
+          "c": 0,
+          "m": 0,
+          "y": 0,
+          "k": 100,
+          "isK100": true
+        }
+      ]
+    }
+  ]
+}
