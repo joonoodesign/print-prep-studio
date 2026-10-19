@@ -1,0 +1,25 @@
+{
+  "name": "PrintPrep Studio Pro - 인쇄 전처리 & 인디자인 자동조판 스튜디오",
+  "short_name": "PrintPrep Pro",
+  "description": "고객 견본 이미지의 수평 보정, OCR 텍스트 추출, 클린 배경 복원, 로고 SVG 벡터화 및 CMYK 300DPI TIFF + 인디자인(.jsx) 원클릭 자동조판 워크스테이션",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#18191c",
+  "theme_color": "#1e1f24",
+  "orientation": "any",
+  "lang": "ko-KR",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%2318191c'/%3E%3Ccircle cx='66' cy='66' r='26' fill='%2300aeef' fill-opacity='0.85'/%3E%3Ccircle cx='126' cy='66' r='26' fill='%23ec008c' fill-opacity='0.85'/%3E%3Ccircle cx='66' cy='126' r='26' fill='%23fff200' fill-opacity='0.85'/%3E%3Ccircle cx='126' cy='126' r='26' fill='%233b82f6' fill-opacity='0.9'/%3E%3Ctext x='96' y='108' font-family='sans-serif' font-size='40' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EPP%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%2318191c'/%3E%3Ccircle cx='176' cy='176' r='72' fill='%2300aeef' fill-opacity='0.85'/%3E%3Ccircle cx='336' cy='176' r='72' fill='%23ec008c' fill-opacity='0.85'/%3E%3Ccircle cx='176' cy='336' r='72' fill='%23fff200' fill-opacity='0.85'/%3E%3Ccircle cx='336' cy='336' r='72' fill='%233b82f6' fill-opacity='0.9'/%3E%3Ctext x='256' y='290' font-family='sans-serif' font-size='112' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EPP%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

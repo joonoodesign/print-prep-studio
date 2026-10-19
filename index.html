@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>PrintPrep Studio Pro — CMYK 300DPI+ &amp; InDesign 자동조판 워크스테이션</title>
+  <meta name="description" content="인쇄소·디자인 실무자를 위한 견본 스캔 보정, OCR 텍스트 분리, 배경 복원, 로고 SVG 벡터화 및 CMYK 300DPI TIFF + 인디자인(.jsx) 원클릭 자동조판 스튜디오" />
+  <meta name="theme-color" content="#18191c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PrintPrep Pro" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2318191c'/%3E%3Ccircle cx='35' cy='35' r='15' fill='%2300aeef'/%3E%3Ccircle cx='65' cy='35' r='15' fill='%23ec008c'/%3E%3Ccircle cx='35' cy='65' r='15' fill='%23fff200'/%3E%3Ccircle cx='65' cy='65' r='15' fill='%233b82f6'/%3E%3C/svg%3E" />
+
+  <!-- Pretendard 한글 웹폰트 CDN -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- 메인 스타일시트 -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ==================== 상단 글로벌 스튜디오 헤더 바 ==================== -->
+  <header class="studio-header">
+    <div class="header-left">
+      <div class="brand-logo" aria-hidden="true">
+        <span class="cmyk-dot dot-c"></span>
+        <span class="cmyk-dot dot-m"></span>
+        <span class="cmyk-dot dot-y"></span>
+        <span class="cmyk-dot dot-k"></span>
+      </div>
+      <div class="brand-title-group">
+        <h1 class="brand-title">PrintPrep Studio <span class="pro-tag">PRO</span></h1>
+        <span class="brand-badge">CMYK 300DPI+ &amp; InDesign 자동조판</span>
+      </div>
+    </div>
+
+    <!-- 중앙 4단계 워크플로우 탭 버튼 -->
+    <nav class="workflow-tabs" aria-label="인쇄 전처리 4단계 워크플로우">
+      <button type="button" id="stepTab1" class="step-tab active" data-step="1">
+        <span class="step-num">①</span> 규격·수평보정
+      </button>
+      <span class="step-arrow" aria-hidden="true">▸</span>
+      <button type="button" id="stepTab2" class="step-tab" data-step="2">
+        <span class="step-num">②</span> 텍스트(OCR) 추출·수정
+      </button>
+      <span class="step-arrow" aria-hidden="true">▸</span>
+      <button type="button" id="stepTab3" class="step-tab" data-step="3">
+        <span class="step-num">③</span> 배경 글자제거·로고복원
+      </button>
+      <span class="step-arrow" aria-hidden="true">▸</span>
+      <button type="button" id="stepTab4" class="step-tab" data-step="4">
+        <span class="step-num">④</span> CMYK 300DPI·인디자인 출력
+      </button>
+    </nav>
+
+    <!-- 우측 액션 및 상태 영역 -->
+    <div class="header-right">
+      <div class="sample-btn-group" role="group" aria-label="샘플 시안 즉시 불러오기">
+        <span class="sample-group-label">샘플시안:</span>
+        <button type="button" id="sampleCardBtn" class="header-chip-btn" title="비뚤게 찍힌 명함 샘플 불러오기">🪪 명함 샘플</button>
+        <button type="button" id="sampleStickerBtn" class="header-chip-btn" title="원형 칼선 스티커 샘플 불러오기">⭕ 원형스티커 샘플</button>
+        <button type="button" id="sampleFlyerBtn" class="header-chip-btn" title="A4 홍보 전단지 샘플 불러오기">📄 A4전단지 샘플</button>
+      </div>
+
+      <div id="pythonStatusBadge" class="status-badge cloud-mode" title="클라우드 단독 작동 중 (로컬 파이썬 부스터 연결 시 자동 감지)">
+        🌐 웹 클라우드 모드 (24h 무료)
+      </div>
+
+      <button type="button" id="openSyncModalBtn" class="header-btn sync-btn" title="직원 간 작업 공유 및 GitHub/구글 드라이브 동기화 설정">
+        👥 직원 작업공유 / 클라우드
+      </button>
+      <button type="button" id="openTutorialBtn" class="header-btn tutorial-btn" title="5단계 실무 사용법 튜토리얼 보기">
+        ❓ 사용법 튜토리얼
+      </button>
+      <button type="button" id="themeToggleBtn" class="header-btn icon-only-btn" title="다크/라이트 스튜디오 테마 전환" aria-label="테마 전환">
+        🌓
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== 메인 3단 와이드 스튜디오 레이아웃 ==================== -->
+  <main class="studio-workspace">
+    <!-- [좌측 패널] 품목·규격·도련 및 이미지 입력 & 도구 제어 -->
+    <aside class="studio-panel left-panel" aria-label="인쇄 규격 및 도구 설정 패널">
+      <div class="panel-scroll-content">
+
+        <!-- 1. 원본 이미지 업로드 / 드래그앤드롭 존 -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">📥</span> 고객 견본 이미지 입력</h2>
+            <span class="section-sub">JPG·PNG·WEBP·클립보드(Ctrl+V)</span>
+          </div>
+          <label for="imageUploadInput" id="dropZone" class="drop-zone">
+            <input type="file" id="imageUploadInput" accept="image/*" hidden />
+            <div class="drop-zone-icon">📸</div>
+            <div class="drop-zone-text">
+              <strong>클릭하여 이미지 선택</strong> 또는 이곳에 드래그<br />
+              <span class="drop-zone-hint">카톡/메신저 이미지 복사 후 <kbd>Ctrl</kbd>+<kbd>V</kbd> 바로 붙여넣기 지원</span>
+            </div>
+          </label>
+        </section>
+
+        <!-- 2. 품목 카테고리 탭 & 세부 치수 설정 -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">📐</span> 인쇄 품목 및 재단 규격</h2>
+            <span class="section-sub">단위: mm</span>
+          </div>
+
+          <!-- 품목 카테고리 탭 버튼 3개 -->
+          <div class="category-tabs" role="tablist">
+            <button type="button" id="catBtnCard" class="cat-tab active" data-category="card" role="tab" aria-selected="true">
+              🪪 명함
+            </button>
+            <button type="button" id="catBtnSticker" class="cat-tab" data-category="sticker" role="tab" aria-selected="false">
+              🏷️ 스티커(사각/원형)
+            </button>
+            <button type="button" id="catBtnFlyer" class="cat-tab" data-category="flyer" role="tab" aria-selected="false">
+              📰 일반인쇄(A4/A5/절지)
+            </button>
+          </div>
+
+          <!-- [품목 1] 명함 세부 설정 영역 -->
+          <div id="panelSpecCard" class="spec-subpanel">
+            <div class="form-row">
+              <label for="cardPresetSelect" class="form-label">명함 표준 규격</label>
+              <select id="cardPresetSelect" class="studio-select">
+                <option value="90x50" selected>일반명함 90×50mm (표준 코팅/비코팅)</option>
+                <option value="86x52">수입지/카드명함 86×52mm (신용카드 규격)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <button type="button" id="orientationToggleBtn" class="studio-btn secondary-btn full-width">
+                🔄 가로형 ↔ 세로형 방향 전환 (현재: 가로형)
+              </button>
+            </div>
+          </div>
+
+          <!-- [품목 2] 스티커 세부 설정 영역 (기본 hidden) -->
+          <div id="panelSpecSticker" class="spec-subpanel" hidden>
+            <div class="form-row">
+              <label for="stickerShapeSelect" class="form-label">스티커 형태 및 도무송 칼선</label>
+              <select id="stickerShapeSelect" class="studio-select">
+                <option value="rect" selected>사각 스티커 (모서리 라운드/직각)</option>
+                <option value="circle">원형 스티커 (Ø 지름 · M100 칼선 자동생성)</option>
+              </select>
+            </div>
+            <div class="form-grid-3" id="stickerRectFields">
+              <div class="form-field">
+                <label for="stickerWidthInput" class="form-label">가로 (mm)</label>
+                <input type="number" id="stickerWidthInput" class="studio-input" value="60" min="10" max="500" step="1" />
+              </div>
+              <div class="form-field">
+                <label for="stickerHeightInput" class="form-label">세로 (mm)</label>
+                <input type="number" id="stickerHeightInput" class="studio-input" value="40" min="10" max="500" step="1" />
+              </div>
+              <div class="form-field">
+                <label for="stickerRadiusInput" class="form-label">라운드 (mm)</label>
+                <input type="number" id="stickerRadiusInput" class="studio-input" value="2" min="0" max="50" step="0.5" />
+              </div>
+            </div>
+            <div class="form-row" id="stickerCircleFields">
+              <label for="stickerDiameterInput" class="form-label">원형 지름 (Ø mm)</label>
+              <input type="number" id="stickerDiameterInput" class="studio-input" value="50" min="10" max="500" step="1" />
+            </div>
+          </div>
+
+          <!-- [품목 3] 일반인쇄 세부 설정 영역 (기본 hidden) -->
+          <div id="panelSpecFlyer" class="spec-subpanel" hidden>
+            <div class="form-row">
+              <label for="flyerPresetSelect" class="form-label">전단·홍보물 표준 규격</label>
+              <select id="flyerPresetSelect" class="studio-select">
+                <option value="A4" selected>A4 (210×297mm · 국배판 전단)</option>
+                <option value="A5">A5 (148×210mm · 리플렛/소형전단)</option>
+                <option value="A3">A3 (297×420mm · 포스터/대형전단)</option>
+                <option value="A6">A6 (105×148mm · 엽서/쿠폰북)</option>
+                <option value="B4">B4 (8절 257×364mm · 신문전단 표준)</option>
+                <option value="B5">B5 (16절 182×257mm · 학원/마트전단)</option>
+                <option value="B6">B6 (32절 128×182mm · 미니전단)</option>
+                <option value="custom">직접 입력 (Custom Size)</option>
+              </select>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="customWidthInput" class="form-label">가로 치수 (mm)</label>
+                <input type="number" id="customWidthInput" class="studio-input" value="210" min="20" max="1000" step="1" />
+              </div>
+              <div class="form-field">
+                <label for="customHeightInput" class="form-label">세로 치수 (mm)</label>
+                <input type="number" id="customHeightInput" class="studio-input" value="297" min="20" max="1000" step="1" />
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="foldTypeSelect" class="form-label">팜플렛/리플렛 접지 가이드</label>
+              <select id="foldTypeSelect" class="studio-select">
+                <option value="none" selected>단면/양면 접지없음</option>
+                <option value="2fold">2단 접지 (중앙 접지선 표시)</option>
+                <option value="3fold">3단 접지 (3등분 접지선 표시)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. 공통 인쇄 사양 설정 (도련, DPI, 총잉크량, 요약박스) -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">⚙️</span> 도련(Bleed) · 해상도 · 잉크량</h2>
+            <span class="section-sub">인쇄소 납품 기준</span>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-field">
+              <label for="bleedInput" class="form-label">도련 여백 (mm)</label>
+              <input type="number" id="bleedInput" class="studio-input" value="1" min="0" max="5" step="0.5" title="명함/스티커 기본 1mm, 전단지 1.5~2mm 권장" />
+            </div>
+            <div class="form-field">
+              <label for="dpiSelect" class="form-label">출력 해상도</label>
+              <select id="dpiSelect" class="studio-select">
+                <option value="300" selected>300 DPI (인쇄 표준)</option>
+                <option value="400">400 DPI (고정밀 인쇄)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="tacLimitInput" class="form-label">총잉크량(TAC %)</label>
+              <input type="number" id="tacLimitInput" class="studio-input" value="280" min="240" max="320" step="5" title="뒷묻음 방지를 위한 CMYK 합산 최대 잉크량 (권장 280%)" />
+            </div>
+          </div>
+
+          <!-- 실시간 계산 요약 박스 -->
+          <div class="spec-summary-box">
+            <div class="summary-row">
+              <span class="summary-label"><span class="dot-indicator trim-dot"></span>재단 사이즈 (Trim)</span>
+              <strong id="summaryTrimSize" class="summary-val">90 × 50 mm</strong>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label"><span class="dot-indicator bleed-dot"></span>작업 사이즈 (도련포함)</span>
+              <strong id="summaryBleedSize" class="summary-val highlight-blue">92 × 52 mm</strong>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label"><span class="dot-indicator pixel-dot"></span>출력 픽셀 해상도</span>
+              <strong id="summaryPixelSize" class="summary-val highlight-cyan">1087 × 614 px (300 DPI)</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. 단계별 퀵 액션 & 마우스 드래그 도구 모음 -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">🛠️</span> 수평 보정 &amp; 캔버스 마우스 도구</h2>
+          </div>
+
+          <button type="button" id="autoPerspectiveBtn" class="studio-btn accent-btn full-width">
+            📐 원근/수평 자동 맞춤 &amp; 도련 배경 확장
+          </button>
+
+          <label class="checkbox-row" for="autoBleedFillCheck">
+            <input type="checkbox" id="autoBleedFillCheck" checked />
+            <span>테두리 색상 샘플링으로 도련(여백) 자동 채우기</span>
+          </label>
+
+          <div class="tool-mode-group" role="radiogroup" aria-label="캔버스 마우스 드래그 모드">
+            <div class="tool-group-label">캔버스 마우스 드래그 모드 선택:</div>
+            <button type="button" id="toolModeSelect" class="tool-mode-btn active" data-tool="select">
+              <span class="tool-icon">🖱️</span>
+              <span class="tool-text">
+                <strong>레이어/영역 확인</strong>
+                <small>추출된 텍스트·로고 위치 선택 및 이동</small>
+              </span>
+            </button>
+            <button type="button" id="toolModeOcr" class="tool-mode-btn" data-tool="ocr">
+              <span class="tool-icon">🔤</span>
+              <span class="tool-text">
+                <strong>글자(OCR) 영역 드래그 추가</strong>
+                <small>원하는 글자 부분만 드래그해 텍스트 추출</small>
+              </span>
+            </button>
+            <button type="button" id="toolModeErase" class="tool-mode-btn" data-tool="erase">
+              <span class="tool-icon">🧹</span>
+              <span class="tool-text">
+                <strong>지울 글자/잡티 영역 드래그</strong>
+                <small>드래그한 영역을 주변 배경색으로 감쪽같이 복원</small>
+              </span>
+            </button>
+            <button type="button" id="toolModeLogo" class="tool-mode-btn" data-tool="logo">
+              <span class="tool-icon">❖</span>
+              <span class="tool-text">
+                <strong>로고 영역 드래그 지정</strong>
+                <small>로고/심볼 영역을 지정해 투명화 및 SVG 벡터 추출</small>
+              </span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+
+    <!-- [중앙 패널] 실시간 인쇄 캔버스 & 프리뷰 워크스페이스 -->
+    <section class="studio-panel center-panel" aria-label="실시간 인쇄 캔버스 워크스페이스">
+      <!-- 상단 캔버스 뷰 툴바 -->
+      <div class="canvas-toolbar">
+        <div class="view-mode-group" role="group" aria-label="미리보기 모드 전환">
+          <button type="button" id="viewModeComposite" class="view-mode-btn active">
+            📑 인디자인 조판 미리보기 (배경+로고+텍스트+칼선)
+          </button>
+          <button type="button" id="viewModeOriginal" class="view-mode-btn">
+            📷 고객 원본 이미지
+          </button>
+          <button type="button" id="viewModeCleanBg" class="view-mode-btn">
+            ✨ 글자 지운 클린 배경 (CMYK 300DPI)
+          </button>
+        </div>
+
+        <div class="toolbar-right-controls">
+          <div class="guide-toggles">
+            <label class="guide-check-label guide-bleed" title="인쇄 도련(작업사이즈) 바깥선 표시">
+              <input type="checkbox" id="showGuideBleed" checked />
+              <span>파란선: 작업사이즈(도련)</span>
+            </label>
+            <label class="guide-check-label guide-trim" title="실제 재단선 또는 원형 스티커 도무송 칼선(M100) 표시">
+              <input type="checkbox" id="showGuideTrim" checked />
+              <span>빨간/마젠타선: 재단선·원형칼선(M100)</span>
+            </label>
+            <label class="guide-check-label guide-safe" title="글자나 로고가 잘리지 않는 안전 여백선 표시">
+              <input type="checkbox" id="showGuideSafe" checked />
+              <span>초록선: 안전여백</span>
+            </label>
+          </div>
+
+          <div class="zoom-controls" role="group" aria-label="캔버스 확대 축소">
+            <button type="button" id="zoomOutBtn" class="zoom-btn" title="축소 (-)">−</button>
+            <button type="button" id="zoomResetBtn" class="zoom-reset-btn" title="100% 화면 맞춤">100%</button>
+            <button type="button" id="zoomInBtn" class="zoom-btn" title="확대 (+)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 중앙 캔버스 뷰포트 (눈금자 및 다크 대지 포함) -->
+      <div id="canvasViewport" class="canvas-viewport">
+        <div class="canvas-stage-wrapper" id="canvasStageWrapper">
+          <!-- 상단/좌측 미니 눈금자 장식 -->
+          <div class="ruler-corner" aria-hidden="true">mm</div>
+          <div class="ruler-horizontal" aria-hidden="true"></div>
+          <div class="ruler-vertical" aria-hidden="true"></div>
+
+          <!-- 실제 캔버스 및 오버레이 컨테이너 -->
+          <div class="canvas-board">
+            <canvas id="mainCanvas" width="1087" height="614"></canvas>
+            <div id="overlayContainer" class="overlay-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 상태 표시줄 및 실시간 CMYK 스포이드/좌표계 -->
+      <footer class="canvas-statusbar">
+        <div class="status-left">
+          <span class="status-dot"></span>
+          <span id="statusMessage">준비 완료 — 좌측에서 고객 견본 이미지를 업로드하거나 상단 [샘플시안] 버튼을 눌러 테스트해보세요.</span>
+        </div>
+        <div class="status-right">
+          <span id="cursorCoordLabel" class="coord-readout">X: 0.0mm, Y: 0.0mm | C:0 M:0 Y:0 K:0</span>
+        </div>
+      </footer>
+    </section>
+
+    <!-- [우측 패널] 추출 텍스트(고객정보) 에디터 & 로고 복원 & 인디자인 출력 -->
+    <aside class="studio-panel right-panel" aria-label="텍스트 편집, 로고 벡터화 및 인디자인 출력 패널">
+      <div class="panel-scroll-content">
+
+        <!-- 섹션 1: 텍스트 자동 추출(OCR) 및 고객정보 수정 -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">🔤</span> 텍스트(OCR) 추출 &amp; 교정</h2>
+            <span class="section-sub">인디자인 편집 가능 텍스트</span>
+          </div>
+
+          <div class="btn-grid-2">
+            <button type="button" id="runFullOcrBtn" class="studio-btn primary-btn">
+              🔍 전체 텍스트 자동 추출
+            </button>
+            <button type="button" id="addTextItemBtn" class="studio-btn secondary-btn">
+              ➕ 텍스트 상자 수동 추가
+            </button>
+          </div>
+
+          <div class="form-row compact-top">
+            <label for="defaultFontSelect" class="form-label">인디자인 기본 서체 지정</label>
+            <select id="defaultFontSelect" class="studio-select">
+              <option value="Pretendard" selected>Pretendard (프리텐다드)</option>
+              <option value="Malgun Gothic">Malgun Gothic (맑은 고딕)</option>
+              <option value="Adobe Myungjo Std">Adobe Myungjo Std (명조)</option>
+              <option value="NanumSquare">NanumSquare (나눔스퀘어)</option>
+              <option value="GmarketSans">GmarketSans (지마켓산스)</option>
+            </select>
+          </div>
+
+          <label class="checkbox-row k100-highlight" for="forceK100Check">
+            <input type="checkbox" id="forceK100Check" checked />
+            <span><strong>검정/어두운 글자 K100% 먹색 자동 고정</strong> (4도 핀나감 방지)</span>
+          </label>
+
+          <!-- 추출된 텍스트 리스트 컨테이너 (JS 동적 렌더링) -->
+          <div id="textItemsList" class="text-items-list" aria-live="polite">
+            <div class="empty-list-placeholder">
+              아직 추출된 텍스트가 없습니다.<br />
+              <strong>[🔍 전체 텍스트 자동 추출]</strong>을 누르거나 캔버스에서 글자 영역을 드래그하세요.
+            </div>
+          </div>
+        </section>
+
+        <!-- 섹션 2: 배경 글자 제거 & 로고 화질개선/벡터화 제어 -->
+        <section class="panel-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">✨</span> 클린 배경 복원 &amp; 로고 벡터화</h2>
+            <span class="section-sub">Inpainting &amp; SVG</span>
+          </div>
+
+          <button type="button" id="eraseAllTextBgBtn" class="studio-btn magic-btn full-width">
+            ✨ 인식된 글자 영역 배경에서 감쪽같이 지우기
+          </button>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="bgSmoothSlider">배경 균일화 / 잡티 억제</label>
+              <span class="slider-hint">종이 얼룩·조명 그림자 보정</span>
+            </div>
+            <input type="range" id="bgSmoothSlider" class="studio-range" min="0" max="100" value="35" />
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <label for="bgSharpSlider">배경 텍스처 선명도 (Sharpen)</label>
+              <span class="slider-hint">300DPI 리샘플링 보정</span>
+            </div>
+            <input type="range" id="bgSharpSlider" class="studio-range" min="0" max="100" value="25" />
+          </div>
+
+          <!-- 추출된 로고 미리보기 카드 -->
+          <div id="logoPreviewBox" class="logo-preview-card">
+            <div class="logo-card-header">
+              <span class="logo-card-title">❖ 추출 로고 미리보기 (투명 배경 &amp; SVG 벡터)</span>
+              <span class="logo-card-tip">좌측 [❖ 로고 영역 드래그]로 지정</span>
+            </div>
+            <div class="logo-canvas-wrap checkerboard-bg">
+              <canvas id="logoCanvas" width="240" height="120"></canvas>
+            </div>
+            <div class="slider-group compact">
+              <div class="slider-header">
+                <label for="logoThresholdSlider">로고 배경 투명화 임계값</label>
+                <span class="slider-hint">기본 235 (밝은 배경 제거)</span>
+              </div>
+              <input type="range" id="logoThresholdSlider" class="studio-range" min="120" max="252" value="235" />
+            </div>
+            <button type="button" id="vectorizeLogoBtn" class="studio-btn secondary-btn full-width">
+              ❖ 일러스트 SVG 벡터 &amp; CMYK 로고 생성
+            </button>
+          </div>
+        </section>
+
+        <!-- 섹션 3: CMYK 300DPI & 인디자인 원클릭 출력 -->
+        <section class="panel-section export-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="sec-icon">🚀</span> CMYK 300DPI &amp; 인디자인 출력</h2>
+            <span class="section-sub">무손실 TIFF + JSX 스크립트</span>
+          </div>
+
+          <div class="form-row">
+            <label for="jobTitleInput" class="form-label">작업명 (고객/업체명 · 파일명 자동 적용)</label>
+            <div class="input-with-btn">
+              <input type="text" id="jobTitleInput" class="studio-input" placeholder="예: 준우디자인_홍길동대표_명함" value="준우디자인_홍길동대표_명함" />
+              <button type="button" id="saveJobCloudBtn" class="studio-btn cloud-save-btn" title="현재 작업을 직원 공유 작업함에 저장">
+                ☁️ 직원 공유 작업함에 저장
+              </button>
+            </div>
+          </div>
+
+          <!-- 핵심 출력 버튼 3종 -->
+          <div class="export-actions-stack">
+            <button type="button" id="exportPackageZipBtn" class="export-hero-btn">
+              <span class="hero-btn-icon">📦</span>
+              <span class="hero-btn-content">
+                <strong>인디자인 자동조판 전체 패키지 (.zip) 다운로드</strong>
+                <small>CMYK 300DPI .tif + 로고 .svg + 자동조판 .jsx 일괄 생성</small>
+              </span>
+            </button>
+
+            <button type="button" id="launchInDesignDirectBtn" class="studio-btn indesign-btn full-width">
+              ⚡ 내 PC 인디자인 즉시 열기 (파이썬 부스터 연동 / .jsx 단독 다운로드)
+            </button>
+
+            <button type="button" id="exportCleanBgTiffBtn" class="studio-btn tiff-btn full-width">
+              🖼️ CMYK 300DPI 클린 배경 (.tif) 단독 다운로드
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+  </main>
+
+  <!-- ==================== 모달 1: 5단계 사용법 튜토리얼 모달 ==================== -->
+  <div id="tutorialModal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="tutorialModalTitle">
+    <div class="modal-container tutorial-modal">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">실무 완벽 가이드</span>
+          <h2 id="tutorialModalTitle" class="modal-title">PrintPrep Studio Pro 5단계 사용법 튜토리얼</h2>
+        </div>
+        <button type="button" id="closeTutorialBtn" class="modal-close-btn" aria-label="튜토리얼 닫기">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 슬라이드 1 -->
+        <div class="tutorial-slide active" data-slide="1">
+          <div class="slide-step-badge">STEP 1 / 5</div>
+          <h3 class="slide-heading">① 품목·규격 선택 및 비뚤어진 견본 사진 펴기</h3>
+          <p class="slide-desc">
+            고객이 휴대폰으로 비스듬히 찍어 보낸 명함·스티커·전단지 사진을 업로드하거나 <kbd>Ctrl</kbd>+<kbd>V</kbd>로 붙여넣으세요.
+          </p>
+          <ul class="slide-Point-list">
+            <li><strong>품목별 규격 프리셋:</strong> 일반명함(90×50), 수입지명함(86×52), 사각/원형 스티커(Ø 지름), A4·A5·8절·16절 등 인쇄소 표준 규격을 즉시 선택합니다.</li>
+            <li><strong>원근/수평 자동 보정 &amp; 도련(Bleed) 자동 채우기:</strong> <code>[📐 원근/수평 자동 맞춤 &amp; 도련 배경 확장]</code> 버튼을 누르면 재단선 바깥 도련(1~2mm)까지 배경색을 자연스럽게 연장해 재단 시 흰 줄이 생기는 사고를 방지합니다.</li>
+          </ul>
+        </div>
+
+        <!-- 슬라이드 2 -->
+        <div class="tutorial-slide" data-slide="2" hidden>
+          <div class="slide-step-badge">STEP 2 / 5</div>
+          <h3 class="slide-heading">② 이미지 속 글자(고객 정보) 자동 추출 및 오타 수정</h3>
+          <p class="slide-desc">
+            이미지 속 상호, 이름, 직함, 전화번호, 주소 등을 일일이 타이핑할 필요 없이 OCR로 즉시 추출합니다.
+          </p>
+          <ul class="slide-Point-list">
+            <li><strong>전체 자동 추출 &amp; 부분 드래그 추출:</strong> 우측 <code>[🔍 전체 텍스트 자동 추출]</code>을 누르거나, 좌측 도구에서 <code>[🔤 글자 영역 드래그 추가]</code>를 선택해 원하는 위치만 드래그할 수 있습니다.</li>
+            <li><strong>먹색(K100%) 자동 고정:</strong> 작은 글씨에 CMYK 4원색이 섞여 인쇄 핀이 나가는 현상을 막기 위해 어두운 글자는 자동으로 <strong>C:0 M:0 Y:0 K:100 먹색</strong>으로 지정됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- 슬라이드 3 -->
+        <div class="tutorial-slide" data-slide="3" hidden>
+          <div class="slide-step-badge">STEP 3 / 5</div>
+          <h3 class="slide-heading">③ 기존 글자 감쪽같이 지우기(클린 배경) &amp; 로고 벡터(<code>.svg</code>) 따기</h3>
+          <p class="slide-desc">
+            새 텍스트를 얹기 전에 원본 이미지에 찍혀 있던 옛날 글자를 주변 배경 질감 그대로 감쪽같이 지워냅니다.
+          </p>
+          <ul class="slide-Point-list">
+            <li><strong>인페인팅 배경 복원:</strong> <code>[✨ 인식된 글자 영역 배경에서 감쪽같이 지우기]</code> 버튼 한 번으로 글자만 싹 지워진 깨끗한 배경 이미지를 만듭니다. 추가로 지울 잡티는 <code>[🧹 지울 글자/잡티 영역 드래그]</code>로 문질러 지우세요.</li>
+            <li><strong>로고 배경 투명화 &amp; SVG 벡터화:</strong> <code>[❖ 로고 영역 드래그 지정]</code>으로 회사 마크를 드래그하면 배경을 투명하게 날리고 일러스트/인디자인용 <code>.svg</code> 벡터 패스로 변환합니다.</li>
+          </ul>
+        </div>
+
+        <!-- 슬라이드 4 -->
+        <div class="tutorial-slide" data-slide="4" hidden>
+          <div class="slide-step-badge">STEP 4 / 5</div>
+          <h3 class="slide-heading">④ CMYK 300DPI 무손실 TIFF 변환 &amp; 인디자인 원클릭 자동 조판(<code>.jsx</code>)</h3>
+          <p class="slide-desc">
+            웹 브라우저 안에서 RGB 이미지를 인쇄소 납품 규격인 <strong>CMYK 4채널 300DPI 무손실 TIFF</strong>로 직접 변환합니다.
+          </p>
+          <ul class="slide-Point-list">
+            <li><strong>총 잉크량(TAC 280%) 자동 제어:</strong> 어두운 배경에서 인쇄 뒷묻음이 발생하지 않도록 GCR/UCR 분판 알고리즘이 CMYK 합산 잉크량을 안전하게 제한합니다.</li>
+            <li><strong>인디자인 완벽 분리 레이어 조판:</strong> 다운로드된 패키지(<code>.zip</code>)의 압축을 풀고 <code>.jsx</code> 파일을 인디자인에 드래그하면 <strong>① 배경 이미지 레이어, ② 로고 벡터 레이어, ③ 수정 가능한 텍스트 프레임 레이어, ④ 원형스티커 M100 별색 칼선 레이어</strong>가 정확한 mm 위치에 자동 생성됩니다!</li>
+          </ul>
+        </div>
+
+        <!-- 슬라이드 5 -->
+        <div class="tutorial-slide" data-slide="5" hidden>
+          <div class="slide-step-badge">STEP 5 / 5</div>
+          <h3 class="slide-heading">⑤ 내 컴퓨터를 꺼놔도 되는 24시간 직원 간 작업 공유법</h3>
+          <p class="slide-desc">
+            매장 접수 PC에서 고객 사진과 오타 수정만 마친 뒤 <code>[☁️ 직원 공유 작업함에 저장]</code>을 누르면 디자인실 PC에서 즉시 이어서 인디자인 조판을 뽑을 수 있습니다.
+          </p>
+          <ul class="slide-Point-list">
+            <li><strong>GitHub <code>db-store</code> &amp; 구글 드라이브 연동:</strong> 상단 <code>[👥 직원 작업공유 / 클라우드]</code> 버튼에서 한 번만 연결해두면 사내 서버 PC를 켜놓지 않아도 365일 24시간 무료로 동기화됩니다.</li>
+            <li><strong>원클릭 공유 링크 복사:</strong> <code>[🔗 원클릭 자동연결 링크 복사]</code>로 생성된 주소를 직원 카카오톡으로 보내면 클릭 즉시 모든 PC가 같은 작업함에 연결됩니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer tutorial-footer">
+        <label class="checkbox-row" for="hideTutorialCheck">
+          <input type="checkbox" id="hideTutorialCheck" />
+          <span>시작 시 자동으로 열지 않기 (상단 ❓ 버튼으로 언제든 다시 보기 가능)</span>
+        </label>
+        <div class="modal-nav-btns">
+          <button type="button" id="prevTutorialBtn" class="studio-btn secondary-btn">◀ 이전 단계</button>
+          <button type="button" id="nextTutorialBtn" class="studio-btn primary-btn">다음 단계 ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 모달 2: 직원 작업 공유 & 클라우드 동기화 모달 ==================== -->
+  <div id="syncModal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+    <div class="modal-container sync-modal">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">24h Free Cloud DB</span>
+          <h2 id="syncModalTitle" class="modal-title">👥 직원 작업 공유함 &amp; 클라우드 실시간 동기화</h2>
+        </div>
+        <button type="button" id="closeSyncModalBtn" class="modal-close-btn" aria-label="동기화 모달 닫기">✕</button>
+      </div>
+
+      <div class="modal-body sync-modal-grid">
+        <!-- 좌측: 공유된 작업 목록 -->
+        <div class="sync-col">
+          <h3 class="sync-col-title">📂 직원 공유 작업함 (클릭 시 캔버스로 즉시 불러오기)</h3>
+          <p class="sync-col-desc">접수 데스크나 다른 직원이 저장한 작업 시안 목록입니다.</p>
+          <div id="sharedJobsList" class="shared-jobs-list">
+            <!-- JS에서 공유 작업 카드 렌더링 -->
+          </div>
+        </div>
+
+        <!-- 우측: GitHub db-store 및 Google Drive 연동 설정 -->
+        <div class="sync-col">
+          <div class="sync-config-card">
+            <h3 class="sync-col-title">⚡ 옵션 1: GitHub <code>db-store</code> 실시간 동기화 (추천)</h3>
+            <p class="sync-col-desc">별도 서버 없이 GitHub 저장소의 <code>db-store</code> 브랜치를 통해 전 직원 PC를 실시간 동기화합니다.</p>
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label for="ghOwnerInput" class="form-label">GitHub 계정 (Owner)</label>
+                <input type="text" id="ghOwnerInput" class="studio-input" value="joonoodesign" placeholder="joonoodesign" />
+              </div>
+              <div class="form-field">
+                <label for="ghRepoInput" class="form-label">저장소 이름 (Repo)</label>
+                <input type="text" id="ghRepoInput" class="studio-input" value="print-prep-studio" placeholder="print-prep-studio" />
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="ghTokenInput" class="form-label">GitHub Personal Access Token (<code>repo</code> 권한)</label>
+              <input type="password" id="ghTokenInput" class="studio-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="btn-grid-2">
+              <button type="button" id="saveGhSyncBtn" class="studio-btn primary-btn">💾 GitHub 동기화 저장·연결</button>
+              <button type="button" id="copyShareLinkBtn" class="studio-btn accent-btn">🔗 직원용 원클릭 연결링크 복사</button>
+            </div>
+          </div>
+
+          <div class="sync-config-card">
+            <h3 class="sync-col-title">📁 옵션 2: Google Drive (Apps Script 웹앱) 연동</h3>
+            <p class="sync-col-desc">내 구글 드라이브 폴더에 작업 JSON 데이터를 백업·동기화하고 싶을 때 웹앱 URL을 입력하세요.</p>
+            <div class="form-row">
+              <label for="gdriveUrlInput" class="form-label">Google Apps Script 배포 URL</label>
+              <input type="url" id="gdriveUrlInput" class="studio-input" placeholder="https://script.google.com/macros/s/.../exec" />
+            </div>
+            <button type="button" id="saveGdriveSyncBtn" class="studio-btn secondary-btn full-width">💾 구글 드라이브 연동 URL 저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 선택적 Tesseract.js CDN (온라인 환경에서 정밀 한글/영문 OCR 지원, 실패/오프라인 시 내장 스마트 분석 엔진 폴백) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+  <!-- CMYK 300DPI TIFF 바이너리 인코더 & 인디자인 JSX/ZIP 패키지 엔진 -->
+  <script src="cmyk-engine.js"></script>
+  <!-- 메인 스튜디오 애플리케이션 로직 -->
+  <script src="app.js"></script>
+</body>
+</html>
